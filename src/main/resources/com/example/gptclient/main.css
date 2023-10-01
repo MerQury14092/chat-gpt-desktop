@@ -1,0 +1,36 @@
+.menu-bar .label {
+    -fx-text-fill: #b8b8b8;
+    -fx-padding: 5px;
+}
+
+.menu-item .label {
+    -fx-text-fill: #b8b8b8;
+}
+
+.menu-item {
+    -fx-background-color: #3e4045;
+}
+
+.menu-item:hover {
+    -fx-background-color: #484a4d;
+}
+
+.input-field {
+    -fx-text-fill: #a6abb2;
+    -fx-padding: 10px;
+    -fx-background-color: #1e1e1e;
+}
+
+#btn-new-chat {
+    -fx-padding: 6px;
+    -fx-background-color: #1e1e1e;
+    -fx-background-radius: 10px;
+}
+
+#btn-new-chat:hover {
+    -fx-background-color: #484a4d;
+}
+
+#btn-new-chat:pressed {
+    -fx-background-color: #1e1e1e;
+}
