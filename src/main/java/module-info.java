@@ -3,6 +3,8 @@ module com.example.gptclient {
     requires javafx.fxml;
 
     requires org.json;
+    requires com.sandec.mdfx;
+    requires org.fxmisc.richtext;
     requires org.controlsfx.controls;
     requires com.dlsc.formsfx;
     requires net.synedra.validatorfx;

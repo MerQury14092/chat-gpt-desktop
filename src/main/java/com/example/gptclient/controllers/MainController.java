@@ -1,12 +1,15 @@
 package com.example.gptclient.controllers;
 
 import com.example.gptclient.DTO.Message;
+import com.example.gptclient.services.ConfigService;
 import com.example.gptclient.services.GptService;
+import com.sandec.mdfx.MarkdownView;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Separator;
@@ -19,8 +22,12 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.InputStream;
+import java.util.List;
+import java.util.Scanner;
 
 import static com.example.gptclient.Project.async;
 import static javafx.application.Platform.runLater;
@@ -87,6 +94,15 @@ public class MainController {
             message_content.setMinHeight(message_content.getMinHeight()+delta);
             chats_content.setMinHeight(chats_content.getMinHeight()+delta);
         }));
+
+        chat_name.setText(ConfigService.getSelected().getName());
+        async(this::show_messages_by_current_chat);
+    }
+
+    private void show_messages_by_current_chat(){
+        for(Message message: ConfigService.getSelected().getMessages()){
+            runLater(() -> addMessage(message.getContent(), message.getRole().equals("assistant")));
+        }
     }
 
     @FXML
@@ -124,29 +140,34 @@ public class MainController {
         if(!event.getCode().equals(KeyCode.ENTER)) {
             return;
         }
-        anim_start();
-        String prompt = input_field.getText();
+        String prompt = input_field.getText().trim();
         input_field.setText("");
+        if(prompt.isEmpty()) {
+            return;
+        }
+        anim_start();
         addMessage(prompt, false);
         async(() -> {
-            String res = GptService.answer(new Message[]{
-                    new Message("user", prompt)
-            });
-            runLater(() -> addMessage(res, true));
-            runLater(this::anim_stop);
+            ConfigService.saveMessage(true, prompt);
+            InputStream input = GptService.answer_stream(ConfigService.getSelected().getMessages().toArray(new Message[0]));
+            runLater(() -> addStreamingMessage(input));
         });
     }
 
     private void addMessage(String str, boolean left){
         AnchorPane pane = new AnchorPane();
         pane.setMinWidth(message_content.getMinWidth());
-        Label area = new Label(str);
+        MarkdownView area = new MarkdownView(){
+            @Override
+            protected List<String> getDefaultStylesheets() {
+                return List.of("/com/example/gptclient/main.css");
+            }
+        };
+        area.setMdString(str);
         area.setLayoutX(200);
         area.setOpacity(0);
         area.setMinHeight(20);
         area.setMaxWidth(message_content.getWidth()-60);
-        area.setWrapText(true);
-        area.setFont(Font.font("JetBrains Mono"));
         area.getStyleClass().add("message");
         AnchorPane.setTopAnchor(area, 6.0);
         AnchorPane.setBottomAnchor(area, 6.0);
@@ -166,30 +187,24 @@ public class MainController {
 
         message_content.getChildren().add(pane);
         messageTimeline.play();
+        async(() -> runLater(() -> message_content_scroll.setVvalue(1.0)));
     }
 
     /**
      * stop word: \n[DONE]
-     * @param source
-     * @param left
      */
-    private void addStreamingMessage(InputStream source, boolean left){
+    private void addStreamingMessage(InputStream source){
         AnchorPane pane = new AnchorPane();
         pane.setMinWidth(message_content.getMinWidth());
-        Label area = new Label("");
+        MarkdownView area = new MarkdownView();
         area.setLayoutX(200);
         area.setOpacity(0);
         area.setMinHeight(20);
         area.setMaxWidth(message_content.getWidth()-60);
-        area.setWrapText(true);
-        area.setFont(Font.font("JetBrains Mono"));
         area.getStyleClass().add("message");
         AnchorPane.setTopAnchor(area, 6.0);
         AnchorPane.setBottomAnchor(area, 6.0);
-        if (left)
-            AnchorPane.setLeftAnchor(area, 10.0);
-        else
-            AnchorPane.setRightAnchor(area, 10.0);
+        AnchorPane.setLeftAnchor(area, 10.0);
         pane.getChildren().add(area);
 
 
@@ -202,6 +217,36 @@ public class MainController {
 
         message_content.getChildren().add(pane);
         messageTimeline.play();
+
+        async(() -> {
+            Scanner sc = new Scanner(source);
+            for (;;){
+                String stroke = sc.nextLine();
+                if (stroke.toUpperCase().contains("[DONE]")) {
+                    runLater(this::anim_stop);
+                    runLater(() -> message_content_scroll.setVvalue(1.0));
+                    break;
+                }
+                if(stroke.isEmpty())
+                    continue;
+                runLater(() -> area.setMdString(area.getMdString()+getContent(stroke.replace("data: ", ""))));
+                runLater(() -> message_content_scroll.setVvalue(1.0));
+            }
+            ConfigService.saveMessage(false, area.getMdString());
+            sc.close();
+        });
+    }
+
+    private String getContent(String str){
+        try {
+            return new JSONObject(str)
+                    .getJSONArray("choices")
+                    .getJSONObject(0)
+                    .getJSONObject("delta")
+                    .getString("content");
+        } catch (JSONException e){
+            return "";
+        }
     }
 
 }

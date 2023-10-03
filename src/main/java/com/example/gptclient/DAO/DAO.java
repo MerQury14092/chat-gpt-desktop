@@ -1,10 +1,13 @@
 package com.example.gptclient.DAO;
 
 import com.example.gptclient.DTO.Chat;
+import org.json.JSONObject;
 
 public interface DAO {
     Chat getChatById(String id);
     Chat[] getAllChats();
     void createChat(String name);
-    void createNewMessage(Chat where, String message);
+    void createNewMessage(String chatId, String role,  String message);
+    JSONObject getConfig();
+    Chat getSelectedChat();
 }

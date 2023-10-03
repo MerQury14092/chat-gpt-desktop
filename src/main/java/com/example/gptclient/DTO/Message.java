@@ -1,5 +1,7 @@
 package com.example.gptclient.DTO;
 
+import org.json.JSONObject;
+
 import java.util.Objects;
 
 public class Message {
@@ -21,10 +23,14 @@ public class Message {
 
     @Override
     public String toString() {
-        return "Message{" +
-                "role='" + role + '\'' +
-                ", content='" + content + '\'' +
+        return "{" +
+                "\"role\":\"" + role + "\"" +
+                ",\"content\":\"" + content + "\"" +
                 '}';
+    }
+
+    public JSONObject toJSON() {
+        return new JSONObject().put("role", role).put("content", content);
     }
 
     public String getRole() {

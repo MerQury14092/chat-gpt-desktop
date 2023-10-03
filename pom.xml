@@ -68,6 +68,39 @@
             <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/com.vladsch.flexmark/flexmark-ext-gfm-strikethrough -->
+        <dependency>
+            <groupId>com.vladsch.flexmark</groupId>
+            <artifactId>flexmark-ext-gfm-strikethrough</artifactId>
+            <version>0.64.8</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.vladsch.flexmark/flexmark-ext-tables -->
+        <dependency>
+            <groupId>com.vladsch.flexmark</groupId>
+            <artifactId>flexmark-ext-tables</artifactId>
+            <version>0.64.8</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.vladsch.flexmark/flexmark-ext-gfm-tasklist -->
+        <dependency>
+            <groupId>com.vladsch.flexmark</groupId>
+            <artifactId>flexmark-ext-gfm-tasklist</artifactId>
+            <version>0.64.8</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.vladsch.flexmark/flexmark-ext-attributes -->
+        <dependency>
+            <groupId>com.vladsch.flexmark</groupId>
+            <artifactId>flexmark-ext-attributes</artifactId>
+            <version>0.64.8</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.fxmisc.richtext/richtextfx -->
+        <dependency>
+            <groupId>org.fxmisc.richtext</groupId>
+            <artifactId>richtextfx</artifactId>
+            <version>0.11.1</version>
+        </dependency>
+
+
+
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>

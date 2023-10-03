@@ -95,7 +95,10 @@
                      <font>
                         <Font name="JetBrains Mono Bold" size="13.0" />
                      </font></Label>
-                  <Label layoutX="394.0" layoutY="71.0" text="Всего токенов: 0" AnchorPane.rightAnchor="20.0" />
+                  <Label layoutX="394.0" layoutY="71.0" text="Всего токенов: 0" AnchorPane.rightAnchor="20.0">
+                     <font>
+                        <Font name="JetBrains Mono Bold" size="13.0" />
+                     </font></Label>
                </children>
             </AnchorPane>
          </top>

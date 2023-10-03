@@ -3,8 +3,7 @@ package com.example.gptclient.services;
 import com.example.gptclient.DTO.Message;
 import org.json.JSONObject;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
@@ -63,5 +62,35 @@ public class GptService {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static InputStream answer_stream(Message[] messages){
+        JSONObject requestBody = new JSONObject();
+        if (messages == null)
+            return null;
+        for(Message message: messages) {
+            JSONObject messageJson = new JSONObject();
+            messageJson.put("role", message.getRole());
+            messageJson.put("content", message.getContent());
+            requestBody.append("messages", messageJson);
+            requestBody.put("stream", true);
+        }
+        requestBody.put("model", model);
+        try {
+            HttpURLConnection conn = (HttpURLConnection) URI.create(STR."https://\{API_Endpont}/v1/chat/completions").toURL().openConnection();
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Authorization","Bearer "+token);
+            conn.setRequestProperty("Content-Type", "application/json");
+            conn.setDoOutput(true);
+            conn.getOutputStream().write(requestBody.toString().getBytes(StandardCharsets.UTF_8));
+            conn.getOutputStream().flush();
+            return conn.getInputStream();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static InputStream direct(String str){
+        return new ByteArrayInputStream(str.getBytes(StandardCharsets.UTF_8));
     }
 }

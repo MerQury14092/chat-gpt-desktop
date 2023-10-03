@@ -1,12 +1,18 @@
 package com.example.gptclient.DTO;
 
+import javafx.collections.MapChangeListener;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class Chat {
     private String id;
     private String name;
     private String uriToImage;
-    private Message[] messages;
+    private List<Message> messages;
 
-    public Chat(String id, String name, String uriToImage, Message[] messages) {
+    public Chat(String id, String name, String uriToImage, List<Message> messages) {
         this.id = id;
         this.name = name;
         this.uriToImage = uriToImage;
@@ -43,23 +49,29 @@ public class Chat {
         this.uriToImage = uriToImage;
     }
 
-    public Message[] getMessages() {
+    public List<Message> getMessages() {
         return messages;
     }
 
-    public void setMessages(Message[] messages) {
-        this.messages = messages;
+    public JSONObject toJSON() {
+        JSONObject object = new JSONObject();
+        object.put("id", id);
+        object.put("name", name);
+        object.put("uriToImage", uriToImage);
+        object.put("messages", messages);
+        return object;
     }
 
     public static ChatBuilder builder(){
         return new ChatBuilder();
     }
 
-    private static class ChatBuilder{
+    public static class ChatBuilder{
+        private ChatBuilder(){}
         private String id;
         private String name;
         private String uriToImage;
-        private Message[] messages;
+        private List<Message> messages;
 
         public ChatBuilder id(String id) {
             this.id = id;
@@ -76,7 +88,7 @@ public class Chat {
             return this;
         }
 
-        public ChatBuilder messages(Message[] messages) {
+        public ChatBuilder messages(List<Message> messages) {
             this.messages = messages;
             return this;
         }
