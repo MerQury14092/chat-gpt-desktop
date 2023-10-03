@@ -2,6 +2,7 @@ module com.example.gptclient {
     requires javafx.controls;
     requires javafx.fxml;
 
+    requires org.json;
     requires org.controlsfx.controls;
     requires com.dlsc.formsfx;
     requires net.synedra.validatorfx;

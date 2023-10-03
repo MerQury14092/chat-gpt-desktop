@@ -1,17 +1,23 @@
 package com.example.gptclient.controllers;
 
+import com.example.gptclient.DTO.Message;
+import com.example.gptclient.services.GptService;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.util.Duration;
 
 public class MainController {
@@ -93,6 +99,32 @@ public class MainController {
         Timeline timeline = new Timeline();
         timeline.getKeyFrames().add(frame);
         timeline.play();
+    }
+
+    @FXML
+    void send_message(KeyEvent event){
+        if(!event.getCode().equals(KeyCode.ENTER)) {
+            return;
+        }
+        anim_start(null);
+        String prompt = input_field.getText();
+        input_field.setText("");
+        addMessage(prompt);
+        addMessage(GptService.answer(new Message[]{
+                new Message("user", prompt)
+        }));
+        anim_stop(null);
+    }
+
+    private void addMessage(String str){
+        AnchorPane pane = new AnchorPane();
+        pane.setMinWidth(message_content.getMinWidth());
+        Label area = new Label(str);
+        area.setMinHeight(20);
+        area.setFont(Font.font("JetBrains Mono"));
+        area.getStyleClass().add("message");
+        pane.getChildren().add(area);
+        message_content.getChildren().add(pane);
     }
 
 }

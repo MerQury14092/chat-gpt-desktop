@@ -1,10 +1,11 @@
 package com.example.gptclient;
 
+import com.example.gptclient.DTO.Message;
+import com.example.gptclient.services.GptService;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 
 import java.io.IOException;
 
@@ -19,7 +20,6 @@ public class HelloApplication extends Application {
         scene.getStylesheets().add(
                 HelloApplication.class.getResource("/com/example/gptclient/main.css").toExternalForm()
         );
-
 
         stage.setTitle("ChatGPT");
         stage.setScene(scene);
