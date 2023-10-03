@@ -22,9 +22,12 @@
 }
 
 #btn-new-chat {
-    -fx-padding: 6px;
+    -fx-padding: 10px;
     -fx-background-color: #1e1e1e;
     -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+    -fx-text-fill: #b6bbb2;
+    -fx-border-color: #a6abb2;
 }
 
 #btn-new-chat:hover {
@@ -35,9 +38,16 @@
     -fx-background-color: #1e1e1e;
 }
 
+.label {
+    -fx-text-fill: #a6abb2;
+}
+
 .message {
     -fx-border-color: #2f2f2f;
-    -fx-padding: 30px;
-    -fx-border-radius: 15px;
-    -fx-text-fill: white;
+    -fx-padding: 10px;
+    -fx-border-radius: 20px;
+    -fx-background-color: #1c1c1c;
+    -fx-background-radius: 20px;
+    -fx-text-fill: #a6abb2;
+
 }

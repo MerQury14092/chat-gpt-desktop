@@ -1,10 +1,9 @@
 package com.example.gptclient;
 
-import com.example.gptclient.DTO.Message;
-import com.example.gptclient.services.GptService;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -22,9 +21,15 @@ public class HelloApplication extends Application {
         );
 
         stage.setTitle("ChatGPT");
+        stage.setResizable(false);
         stage.setScene(scene);
         stage.setMinWidth(700);
         stage.setMinHeight(900);
+
+        scene.setOnKeyPressed(keyEvent -> {
+            if(keyEvent.getCode().equals(KeyCode.F1))
+                System.out.println("Справка");
+        });
 
         stage.show();
     }
