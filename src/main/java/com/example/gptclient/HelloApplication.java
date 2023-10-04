@@ -21,7 +21,7 @@ public class HelloApplication extends Application {
         );
 
         stage.setTitle("ChatGPT");
-        //stage.setResizable(false);
+        stage.setResizable(false);
         stage.setScene(scene);
         stage.setMinWidth(700);
         stage.setMinHeight(900);

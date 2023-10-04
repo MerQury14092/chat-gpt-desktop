@@ -89,6 +89,12 @@ public class LocalFileDao implements DAO{
     }
 
     @Override
+    public void selectChat(String chatId) {
+        settings.put("selected_chat", chatId);
+        push();
+    }
+
+    @Override
     public Chat getChatById(String id) {
         for(Object obj: chats){
             if(((JSONObject)obj).getString("id").equals(id)) {

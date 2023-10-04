@@ -16,4 +16,12 @@ public class ConfigService {
     public static void saveMessage(boolean isUser, String content){
         dao.createNewMessage(getSelected().getId(), isUser?"user":"assistant", content);
     }
+
+    public static Chat[] getAll(){
+        return dao.getAllChats();
+    }
+
+    public static void selectChat(String id){
+        dao.selectChat(id);
+    }
 }

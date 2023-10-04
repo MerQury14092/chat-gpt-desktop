@@ -107,17 +107,17 @@
    <left>
       <AnchorPane prefHeight="773.0" prefWidth="151.0" style="-fx-background-color: #1f262a;" BorderPane.alignment="CENTER">
          <children>
-            <ScrollPane fx:id="chats_content" hbarPolicy="NEVER" layoutY="117.0" prefHeight="600.0" prefWidth="150.0" style="-fx-background-color: #1f262a;" vbarPolicy="NEVER">
+            <ScrollPane fx:id="chats_content_scroll" hbarPolicy="NEVER" layoutY="117.0" prefHeight="600.0" prefWidth="150.0" style="-fx-background-color: #1f262a;" vbarPolicy="NEVER">
                <content>
-                  <VBox prefWidth="153.0" style="-fx-background-color: #1f262a;" />
+                  <VBox fx:id="chats_content" prefWidth="150.0" style="-fx-background-color: #1f262a;" styleClass="chats" />
                </content>
             </ScrollPane>
-            <Button id="btn-new-chat" layoutX="33.0" layoutY="717.0" mnemonicParsing="false" text="NEW CHAT" AnchorPane.bottomAnchor="17.0">
+            <Button id="btn-new-chat" layoutX="33.0" layoutY="720.0" mnemonicParsing="false" onMousePressed="#createNewChat" text="NEW CHAT" AnchorPane.bottomAnchor="14.0">
                <font>
                   <Font name="JetBrains Mono Bold" size="13.0" />
                </font>
             </Button>
-            <AnchorPane id="gpt-icon" fx:id="gpt_icon_background" layoutX="32.0" layoutY="14.0" prefHeight="90.0" prefWidth="90.0" style="-fx-background-color: #74aa9c; -fx-background-radius: 30px;">
+            <AnchorPane id="gpt-icon" fx:id="gpt_icon_background" layoutX="32.0" layoutY="14.0" onMousePressed="#interrupt_generating" prefHeight="90.0" prefWidth="90.0" style="-fx-background-color: #74aa9c; -fx-background-radius: 30px;">
                <effect>
                   <DropShadow height="30.0" radius="14.5" width="30.0" />
                </effect>

@@ -10,4 +10,5 @@ public interface DAO {
     void createNewMessage(String chatId, String role,  String message);
     JSONObject getConfig();
     Chat getSelectedChat();
+    void selectChat(String chatId);
 }

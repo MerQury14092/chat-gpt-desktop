@@ -64,9 +64,21 @@
     -mdfx-bq-color-border: #4488cc; /* the blockquote's border color */
     -mdfx-bq-color-background: black; /* the blockquote's background color */
 }
+
 .markdown-text {
     -fx-font-family: "JetBrains Mono";
     -mdfx-font-color: #a6abb2;
+}
+
+.chat-view {
+    -fx-border-color: #a6abb2;
+    -fx-padding: 5px;
+    -fx-border-radius: 25px;
+}
+
+.selected-chat-view {
+    -fx-background-color:  #302f35;
+    -fx-background-radius: 25px;
 }
 
 .markdown-italic {
