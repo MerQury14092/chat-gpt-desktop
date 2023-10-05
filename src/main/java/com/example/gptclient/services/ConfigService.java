@@ -24,4 +24,12 @@ public class ConfigService {
     public static void selectChat(String id){
         dao.selectChat(id);
     }
+
+    public static void deleteChat(String id){
+        dao.deleteChat(id);
+    }
+
+    public static Chat createNewChat(String name, String uri){
+        return dao.createChat(name, uri);
+    }
 }

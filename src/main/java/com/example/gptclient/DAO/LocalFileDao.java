@@ -60,15 +60,16 @@ public class LocalFileDao implements DAO{
         if (!success)
             throw new IOException(STR."\{file.getName()} file can not be created");
         Files.writeString(Path.of(file.getPath()), config.toString());
-        fetch();
+        push();
     }
 
     private void createChatsFile(File file) throws IOException {
         JSONArray chats = new JSONArray();
         JSONObject object = Chat.builder()
-                .id("123")
-                .name("432")
+                .id("0")
+                .name("First chat!")
                 .messages(List.of())
+                .uriToImage("")
                 .build()
                 .toJSON();
         chats.put(object);
@@ -76,16 +77,56 @@ public class LocalFileDao implements DAO{
         if (!success)
             throw new IOException(STR."\{file.getName()} file can not be created");
         Files.writeString(Path.of(file.getPath()), chats.toString());
-        fetch();
+        push();
     }
 
     private void push(){
         try {
             Files.writeString(Path.of("config.json"), settings.toString(4));
-            Files.writeString(Path.of("cache.json"), chats.toString(4));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            System.out.println("Config can not pushed");
         }
+        try {
+            Files.writeString(Path.of("cache.json"), chats.toString(4));
+        } catch (Exception e) {
+            System.out.println("Chats can not pushed");
+        }
+    }
+
+    @Override
+    public void deleteChat(String chatId) {
+        int index = 0;
+        for(int i = 0; i < chats.length(); i++){
+            if(chats.getJSONObject(i).getString("id").equals(chatId))
+                index = i;
+        }
+        chats.remove(index);
+        push();
+    }
+
+    @Override
+    public Chat createChat(String name, String uri) {
+        JSONObject chat = new JSONObject();
+        chat.put("id", random());
+        chat.put("uriToImage", uri);
+        chat.put("name", name);
+        chat.put("messages", List.of());
+        chats.put(chat);
+        push();
+        return Chat.builder()
+                .name(name)
+                .id(chat.getString("id"))
+                .uriToImage(uri)
+                .messages(List.of())
+                .build();
+    }
+
+    private String random(){
+        char[] chars = new char[10];
+        for (int i = 0; i < chars.length; i++) {
+            chars[i] = (char) (Math.random()*(int)'A' + (int)'z');
+        }
+        return new String(chars);
     }
 
     @Override
@@ -124,12 +165,6 @@ public class LocalFileDao implements DAO{
                     .build();
         }
         return res;
-    }
-
-    @Override
-    public void createChat(String name) {
-        chats.put(Chat.builder().id("DSASD").name(name).messages(List.of()).uriToImage("").build().toJSON());
-        push();
     }
 
     public void createChatById(String id) {

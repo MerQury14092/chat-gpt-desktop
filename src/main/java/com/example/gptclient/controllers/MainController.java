@@ -4,11 +4,11 @@ import com.example.gptclient.DTO.Chat;
 import com.example.gptclient.DTO.Message;
 import com.example.gptclient.services.ConfigService;
 import com.example.gptclient.services.GptService;
-import com.sandec.mdfx.MarkdownView;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.collections.FXCollections;
 import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
@@ -36,6 +36,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 import static com.example.gptclient.Project.async;
 import static javafx.application.Platform.runLater;
@@ -75,6 +76,8 @@ public class MainController {
 
     private Timeline anim;
     private boolean isTyping;
+
+    private List<String> theChatWhereAreGenerating;
 
     @FXML
     private void initialize(){
@@ -160,9 +163,23 @@ public class MainController {
         timeline.play();
     }
 
+    private boolean isShiftPressed;
+
+    @FXML
+    void keyRelease(KeyEvent event){
+        if(event.getCode().equals(KeyCode.SHIFT))
+            isShiftPressed = false;
+    }
     @FXML
     void send_message(KeyEvent event){
+        if(event.getCode().equals(KeyCode.SHIFT))
+            isShiftPressed = true;
         if(!event.getCode().equals(KeyCode.ENTER)) {
+            return;
+        }
+        if(isShiftPressed){
+            input_field.setText(input_field.getText() + "\n");
+            input_field.positionCaret(input_field.getText().length());
             return;
         }
         String prompt = input_field.getText().trim();
@@ -188,13 +205,14 @@ public class MainController {
     private void addMessage(String str, boolean left){
         AnchorPane pane = new AnchorPane();
         pane.setMinWidth(message_content.getMinWidth());
-        MarkdownView area = new MarkdownView(){
+        /*MarkdownView area = new MarkdownView(){
             @Override
             protected List<String> getDefaultStylesheets() {
                 return List.of("/com/example/gptclient/main.css");
             }
-        };
-        area.setMdString(str);
+        };*/
+        Label area = new Label();
+        area.setText(str);
         area.setLayoutX(200);
         area.setOpacity(0);
         area.setMinHeight(20);
@@ -247,12 +265,13 @@ public class MainController {
     private void addStreamingMessage(InputStream source){
         AnchorPane pane = new AnchorPane();
         pane.setMinWidth(message_content.getMinWidth());
-        MarkdownView area = new MarkdownView(){
+        /*MarkdownView area = new MarkdownView(){
             @Override
             protected List<String> getDefaultStylesheets() {
                 return List.of("/com/example/gptclient/main.css");
             }
-        };
+        };*/
+        Label area = new Label();
         area.setLayoutX(200);
         area.setOpacity(0);
         area.setMinHeight(20);
@@ -285,21 +304,46 @@ public class MainController {
                 }
                 if(stroke.isEmpty())
                     continue;
-                runLater(() -> area.setMdString(area.getMdString()+getContent(stroke.replace("data: ", ""))));
+                runLater(() -> area.setText(area.getText()+getContent(stroke.replace("data: ", ""))));
                 runLater(() -> message_content_scroll.setVvalue(1.0));
             }
-            ConfigService.saveMessage(false, area.getMdString());
+            ConfigService.saveMessage(false, area.getText());
             sc.close();
         });
     }
 
     @FXML
     private void createNewChat(){
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Creating new conversation...");
+        alert.setHeaderText(null);
+        AnchorPane root = new AnchorPane();
         VBox box = new VBox();
-        alert.setContentText("Пока недоступно");
-        alert.showAndWait();
+        box.setPrefWidth(450);
+
+        AnchorPane name = new AnchorPane();
+        Label nameText = new Label("Enter the name of chat (1..10 characters)");
+        TextArea nameInput = new TextArea();
+        nameInput.setMaxWidth(150);
+        AnchorPane.setRightAnchor(nameInput, 0.0);
+        name.getChildren().addAll(nameText, nameInput);
+
+        /*AnchorPane uri = new AnchorPane();
+        Label uriText = new Label("Enter the URI to image");
+        TextArea uriInput = new TextArea();
+        uriInput.setMaxWidth(150);
+        AnchorPane.setRightAnchor(nameInput, 0.0);
+        uri.getChildren().addAll(uriText, uriInput);*/
+
+        box.getChildren().addAll(name/*, uri*/);
+        root.getChildren().add(box);
+        alert.getDialogPane().setContent(root);
+        if(alert.showAndWait().get().equals(ButtonType.OK)) {
+            addChat(ConfigService.createNewChat(nameInput.getText()
+                    /*, uriInput.getText())*/,
+                    "https://w7.pngwing.com/pngs/985/558/png-transparent-pig-illustration-pig-emoji-emoticon-sticker-pig-mammal-animals-computer.png"
+            ));
+        }
     }
 
     private void changeSelectionChatView(String chatId){
@@ -379,13 +423,13 @@ public class MainController {
             AnchorPane.setBottomAnchor(this, 5.0);
 
             ContextMenu menu = new ContextMenu();
-            MenuItem first = new MenuItem("Print ID");
-            first.setOnAction(event -> {
-                System.out.println(chatId);
-            });
-            MenuItem second = new MenuItem("second");
-            MenuItem third = new MenuItem("third");
-            menu.getItems().addAll(first, second, third);
+            MenuItem editItem = new MenuItem("Edit");
+            MenuItem deleteItem = new MenuItem("Delete");
+            deleteItem.setOnAction(event -> {
+                        deleteChat(this.chatId);
+                    }
+            );
+            menu.getItems().addAll(editItem, deleteItem);
 
             this.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
                 if(event.getButton().equals(MouseButton.SECONDARY)){
@@ -393,6 +437,11 @@ public class MainController {
                 }
             });
         }
+    }
+
+    private void deleteChat(String chatId){
+        chats_content.getChildren().removeIf(node -> ((ChatView)((AnchorPane) node).getChildren().get(0)).chatId.equals(chatId));
+        ConfigService.deleteChat(chatId);
     }
 
     private void addChat(Chat chat){
