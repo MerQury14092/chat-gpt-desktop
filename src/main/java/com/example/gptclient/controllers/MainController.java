@@ -377,7 +377,7 @@ public class MainController {
                     }
                     runLater(() -> preview.setImage(ref.img));
                 } catch (Exception e) {
-                    System.out.println(STR."\{e.getClass()}: \{e.getMessage()}");
+                    System.out.println(e.getClass()+ " " + e.getMessage());
                     runLater(() -> preview.setImage(new Image(MainController.class.getResourceAsStream("/com/example/gptclient/icons/chat.png"))));
                 }
             });

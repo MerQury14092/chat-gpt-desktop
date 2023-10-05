@@ -10,7 +10,6 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
-import static java.lang.StringTemplate.STR;
 
 public class GptService {
     private static final String model = "gpt-4";
@@ -30,7 +29,7 @@ public class GptService {
         requestBody.put("model", model);
         System.out.println(requestBody);
         try {
-            HttpURLConnection conn = (HttpURLConnection) URI.create(STR."https://\{API_Endpont}/v1/chat/completions").toURL().openConnection();
+            HttpURLConnection conn = (HttpURLConnection) URI.create("https://"+API_Endpont+"/v1/chat/completions").toURL().openConnection();
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Authorization","Bearer "+token);
             conn.setRequestProperty("Content-Type", "application/json");
@@ -77,7 +76,7 @@ public class GptService {
         }
         requestBody.put("model", model);
         try {
-            HttpURLConnection conn = (HttpURLConnection) URI.create(STR."https://\{API_Endpont}/v1/chat/completions").toURL().openConnection();
+            HttpURLConnection conn = (HttpURLConnection) URI.create("https://"+API_Endpont+"/v1/chat/completions").toURL().openConnection();
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Authorization","Bearer "+token);
             conn.setRequestProperty("Content-Type", "application/json");

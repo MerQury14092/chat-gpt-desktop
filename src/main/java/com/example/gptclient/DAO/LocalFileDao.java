@@ -58,7 +58,7 @@ public class LocalFileDao implements DAO{
         config.put("selected_chat", "0");
         var success = file.createNewFile();
         if (!success)
-            throw new IOException(STR."\{file.getName()} file can not be created");
+            throw new IOException(file.getName()+" file can not be created");
         Files.writeString(Path.of(file.getPath()), config.toString());
         push();
     }
@@ -75,7 +75,7 @@ public class LocalFileDao implements DAO{
         chats.put(object);
         var success = file.createNewFile();
         if (!success)
-            throw new IOException(STR."\{file.getName()} file can not be created");
+            throw new IOException(file.getName()+" file can not be created");
         Files.writeString(Path.of(file.getPath()), chats.toString());
         push();
     }
